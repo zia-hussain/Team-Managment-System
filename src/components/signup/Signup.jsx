@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import SignupImg from "../../assets/images/signup shop img.jpg";
+import SignupImg from "../../assets/images/1.jpg";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig"; // Adjust path accordingly
 import { getDatabase, ref, set } from "firebase/database";
@@ -25,7 +25,7 @@ const ShopCreate = () => {
       email: form.email.value,
       password: form.password.value,
       confirmPassword: form.confirmPassword.value,
-      salary: form.salary.value, // Get the salary value
+      // salary: form.salary.value, // Get the salary value
     };
 
     if (values.password !== values.confirmPassword) {
@@ -49,7 +49,7 @@ const ShopCreate = () => {
       await set(ref(db, `users/${userId}`), {
         name: values.name,
         email: values.email,
-        salary: values.salary, // Save salary in the database
+        // salary: values.salary, // Save salary in the database
       });
 
       console.log(`User data saved for UID: ${userId}`);
@@ -118,16 +118,6 @@ const ShopCreate = () => {
                   type="email"
                   name="email"
                   placeholder="Email address"
-                  required
-                  className="appearance-none block w-full px-3 py-3 border border-gray-700 rounded-md bg-gray-900 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                />
-              </div>
-
-              <div>
-                <input
-                  type="number"
-                  name="salary"
-                  placeholder="Monthly Salary"
                   required
                   className="appearance-none block w-full px-3 py-3 border border-gray-700 rounded-md bg-gray-900 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />

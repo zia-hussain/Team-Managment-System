@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import LoginImg from "../../assets/images/login shop img.jpg";
+import LoginImg from "../../assets/images/2.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";

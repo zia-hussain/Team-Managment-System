@@ -47,7 +47,9 @@ const Dashboard = () => {
         <h1>Dashboard</h1>
         <p>
           {/* Display loading state or fetched username */}
-          {loading ? "Loading..." : `Welcome, ${username}`}
+          {loading
+            ? "Loading..."
+            : `Welcome, ${username} yeh dashboard tumhara hai, HEHE!`}
         </p>
         <button
           className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold mt-5

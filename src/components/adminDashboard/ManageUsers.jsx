@@ -163,7 +163,13 @@ const ManageUsers = () => {
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back
       </button>
-      <h1 className="text-5xl font-extrabold mb-10">Manage Teams & Users</h1>
+      <h1
+        className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400
+
+ bg-clip-text text-transparent"
+      >
+        Manage Teams & Users
+      </h1>
 
       {/* Teams Card Grid */}
       <>

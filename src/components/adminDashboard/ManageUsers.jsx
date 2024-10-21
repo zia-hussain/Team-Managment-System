@@ -7,13 +7,17 @@ import {
   deleteTeam,
 } from "../../redux/actions/action";
 import DetailModal from "../Modals/DetailModal";
-import { get, getDatabase, ref } from "firebase/database";
+import { get, getDatabase, ref, remove, set } from "firebase/database";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { deleteUser } from "firebase/auth";
+import { db } from "../../firebase/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 
 const ManageUsers = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { teams, loading } = useSelector((state) => state.teams);
+  const { teams, loading, members } = useSelector((state) => state.teams);
   const [memberNames, setMemberNames] = useState({});
   const [selectedTeam, setSelectedTeam] = useState(null);
   console.log("selectedTeam", selectedTeam?.name);
@@ -79,6 +83,57 @@ const ManageUsers = () => {
   };
 
   // Handle delete user or team
+  const handleDeleteUser = async (
+    teamId,
+    userId,
+    currentMembers,
+    setCurrentMembers
+  ) => {
+    if (!teamId || !userId) {
+      console.error("Invalid teamId or userId", { teamId, userId });
+      return;
+    }
+
+    try {
+      // Get the current team data to find the user to delete
+      const teamRef = ref(db, `teams/${teamId}`);
+      const teamSnapshot = await get(teamRef);
+      handleClose();
+
+      if (teamSnapshot.exists()) {
+        const teamData = teamSnapshot.val();
+        const members = teamData.members || [];
+
+        // Find the index of the member with the matching userId
+        const memberIndex = members.findIndex((member) => member.id === userId);
+
+        if (memberIndex !== -1) {
+          // Remove the member from the array
+          members.splice(memberIndex, 1);
+
+          // Update the team data with the new members list
+          await set(teamRef, {
+            ...teamData,
+            members, // Save updated members list
+          });
+
+          // Update the local state to reflect the deletion
+          setCurrentMembers((prevMembers) =>
+            prevMembers.filter((member) => member.id !== userId)
+          );
+
+          dispatch(deleteMember(userId)); // Dispatch the action after successful deletion
+        } else {
+          console.error("User not found in team members", userId);
+        }
+      } else {
+        console.error("Team does not exist", teamId);
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
   const handleDeleteTeam = (teamId) => {
     setItemToDelete(`Team ${teamId}`);
     setShowDeleteModal(true);
@@ -95,11 +150,20 @@ const ManageUsers = () => {
     setShowDeleteModal(false);
     handleClose();
   };
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white px-8 py-12">
-      <h1 className="text-5xl font-extrabold mb-10 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-        Manage Teams & Users
-      </h1>
+      <button
+        className="absolute left-10 top-10 flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
+        onClick={handleBackClick}
+      >
+        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+        Back
+      </button>
+      <h1 className="text-5xl font-extrabold mb-10">Manage Teams & Users</h1>
 
       {/* Teams Card Grid */}
       <>
@@ -164,60 +228,13 @@ const ManageUsers = () => {
           </div>
         )}
       </>
-
-      {/* Custom Modal */}
-      {/* {open && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-          <div className="bg-gray-900 text-white p-8 rounded-lg shadow-lg max-w-3xl w-full">
-            {selectedTeam && (
-              <>
-                <h2 className="text-3xl font-bold mb-4">
-                  {selectedTeam.name} Members
-                </h2>
-                <ul className="space-y-4">
-                  {members[selectedTeam.id] &&
-                    members[selectedTeam.id].map((member) => (
-                      <li
-                        key={member.uid}
-                        className="flex justify-between items-center bg-gray-800 p-4 rounded-lg"
-                      >
-                        <span className="text-lg font-semibold">
-                          {member.name || "No Name"}
-                        </span>
-                        <button
-                          className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors"
-                          onClick={() =>
-                            handleDeleteUser(selectedTeam.id, member.uid)
-                          }
-                        >
-                          Delete
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-                <button
-                  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-lg"
-                  onClick={handleClose}
-                >
-                  Close
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )} */}
       {open && (
-        <DetailModal selectedTeam={selectedTeam} onCancel={handleClose} />
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {/* {showDeleteModal && (
-        <DeleteModal
-          onConfirm={confirmDelete}
-          onCancel={() => setShowDeleteModal(false)}
-          itemToDelete={itemToDelete}
+        <DetailModal
+          selectedTeam={selectedTeam}
+          onCancel={handleClose}
+          onDeleteUser={handleDeleteUser}
         />
-      )} */}
+      )}
     </div>
   );
 };

@@ -9,6 +9,8 @@ import AdminLogin from "./components/admin/login/AdminLogin";
 import PrivateRoute from "./components/PrivateRoute"; // Adjust the path if necessary
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast notifications
 import AdminDashboard from "./components/adminDashboard/Dashboard";
+import ManageTeams from "./components/adminDashboard/ManageTeams";
+import ManageUsers from "./components/adminDashboard/ManageUsers";
 
 const App = () => {
   return (
@@ -19,7 +21,12 @@ const App = () => {
           <Route path="/login" element={<Login />} />
 
           {/* Private routes need to be wrapped with <Route> */}
-          <Route path="/" element={<PrivateRoute element={<Dashboard />} />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute element={<Dashboard />} requiredRole="user" />
+            }
+          />
 
           {/* Admin-specific route */}
           <Route
@@ -28,6 +35,8 @@ const App = () => {
               <PrivateRoute element={<AdminDashboard />} requiredRole="admin" />
             }
           />
+          <Route path="/manage-teams" element={<ManageTeams />} />
+          <Route path="/manage-users" element={<ManageUsers />} />
         </Routes>
 
         {/* Toast container for notifications */}

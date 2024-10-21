@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast notifica
 import AdminDashboard from "./components/adminDashboard/Dashboard";
 import ManageTeams from "./components/adminDashboard/ManageTeams";
 import ManageUsers from "./components/adminDashboard/ManageUsers";
+import TeamDetailPage from "./components/userDashboard/TeamDetailPage";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/teams/:teamid" element={<TeamDetailPage />} />
 
           {/* Private routes need to be wrapped with <Route> */}
           <Route

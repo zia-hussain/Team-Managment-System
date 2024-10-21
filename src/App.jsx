@@ -20,7 +20,7 @@ const App = () => {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/teams/:teamid" element={<TeamDetailPage />} />
+          <Route path="/teams/:teamId" element={<TeamDetailPage />} />
 
           {/* Private routes need to be wrapped with <Route> */}
           <Route

@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux"; // Import useSelector
+import AnswerModal from "./AnswerModal";
 
 const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
-  console.log(selectedTeam);
+  const [selectedMember, setSelectedMember] = useState(null);
+
+  // Retrieve questions specific to the selected team
+  const questions = selectedTeam.questions || []; // Access questions directly from the selected team
+
+  console.log(questions, "Questions");
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all duration-300 ease-in-out scale-95 hover:scale-100 border border-gray-200 dark:border-gray-700">
@@ -41,12 +49,30 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
                 <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
                   {member.name}
                 </span>
-                <button
-                  className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                  onClick={() => onDeleteUser(member.id)}
-                >
-                  Remove
-                </button>
+                <div className="space-x-2">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                    onClick={() => setSelectedMember(member)}
+                  >
+                    View Answers
+                  </button>
+                  <button
+                    className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                    onClick={() => {
+                      if (selectedTeam && member.id) {
+                        console.log(selectedTeam.id, member.id);
+                        onDeleteUser(selectedTeam.id, member.id); // Ensure teamId and member.id are passed
+                      } else {
+                        console.error("Invalid team or member data", {
+                          selectedTeam,
+                          member,
+                        });
+                      }
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))
           ) : (
@@ -62,6 +88,15 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
           Close
         </button>
       </div>
+
+      {/* Display Answer Modal when a member is selected */}
+      {selectedMember && (
+        <AnswerModal
+          member={selectedMember}
+          onClose={() => setSelectedMember(null)}
+          questions={questions} // Pass questions specific to the selected team
+        />
+      )}
     </div>
   );
 };

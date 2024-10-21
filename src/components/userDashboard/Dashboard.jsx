@@ -8,14 +8,17 @@ import LogoutModal from "../Modals/LogoutModal"; // Import the LogoutModal compo
 import AddIcon from "@mui/icons-material/Add"; // For Create Team icon
 import DarkModeToggle from "@mui/icons-material/Brightness4"; // Icon for dark mode
 import LightModeToggle from "@mui/icons-material/Brightness7"; // Icon for light mode
+import { Link, useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [username, setUsername] = useState(""); // State to hold the username
   const [loading, setLoading] = useState(true); // State to track loading
   const [showLogoutModal, setShowLogoutModal] = useState(false); // State to control modal visibility
   const [darkMode, setDarkMode] = useState(true); // Default to dark mode
   const [teams, setTeams] = useState([]); // State to hold the user's teams
+  console.log(teams, "teams");
 
   const handleLogout = () => {
     setShowLogoutModal(true);
@@ -50,7 +53,7 @@ const Dashboard = () => {
 
   // Fetch teams the user is a member of
   const fetchUserTeams = async (userId) => {
-    const userTeamsRef = ref(getDatabase(), `users/${userId}/teams`);
+    const userTeamsRef = ref(getDatabase(), `/teams`);
     onValue(userTeamsRef, (snapshot) => {
       const teamsData = snapshot.val() || {};
       const teamList = Object.keys(teamsData).map((key) => ({
@@ -77,7 +80,7 @@ const Dashboard = () => {
 
   return (
     <div
-      className={`p-5 h-screen w-full ${
+      className={`p-5 min-h-screen w-full ${
         darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"
       } transition duration-300`}
     >
@@ -106,22 +109,32 @@ const Dashboard = () => {
           <p className="text-center text-gray-400">
             Start a new team and become the leader!
           </p>
-          <button className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">
+          <Link
+            to={"/manage-teams"}
+            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+          >
             Create Team
-          </button>
+          </Link>
         </div>
 
         {/* Team Cards */}
-        {teams?.map((team) => (
+        {teams.map((team) => (
           <div
             key={team.id}
-            className="bg-gray-100 rounded-lg shadow-lg p-5 flex flex-col items-center justify-center transition-transform transform hover:scale-105 cursor-pointer"
-            onClick={() => console.log(`Viewing team: ${team.name}`)} // Replace with your navigation to team details
+            className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-lg p-5 flex flex-col transition-transform transform hover:scale-105 cursor-pointer border-l-4 border-blue-600 backdrop-blur-lg"
+            onClick={() => navigate(`/teams/${team.id}`)}
           >
-            <h2 className="mt-2 text-lg font-semibold">{team.name}</h2>
-            <p className="text-center text-gray-400">
-              Members: {team.members.length}{" "}
-              {/* Adjust this based on your team structure */}
+            {/* Team Name */}
+            <h2 className="mt-2 text-3xl font-bold text-white">{team.name}</h2>
+
+            {/* Team Type */}
+            <p className="text-md text-blue-300 font-medium mb-2">
+              Type: {team.category || "Unspecified"}
+            </p>
+
+            {/* Members Count */}
+            <p className="text-end text-7xl font-bold text-gray-700">
+              {team.members.length}
             </p>
           </div>
         ))}

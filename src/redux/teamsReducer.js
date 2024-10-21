@@ -6,6 +6,7 @@ import {
   ADD_MEMBER,
   DELETE_MEMBER,
 } from "./actions/actionTypes";
+import { ADD_ANSWER } from "./actions/action";
 
 const initialState = {
   teams: [],
@@ -15,6 +16,9 @@ const initialState = {
 };
 
 const teamsReducer = (state = initialState, action) => {
+  const { teamId, memberId, answer } = action;
+  const team = state.teams[teamId];
+
   switch (action.type) {
     case FETCH_TEAMS:
       return {
@@ -63,6 +67,24 @@ const teamsReducer = (state = initialState, action) => {
             : team
         ),
       };
+
+    case ADD_ANSWER:
+      // Update member answers
+      return {
+        ...state,
+        teams: {
+          ...state.teams,
+          [teamId]: {
+            ...team,
+            members: team.members.map((member) =>
+              member.id === memberId
+                ? { ...member, answers: [...(member.answers || []), answer] }
+                : member
+            ),
+          },
+        },
+      };
+
     default:
       return state;
   }

@@ -13,9 +13,10 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const ManageUsers = () => {
   const dispatch = useDispatch();
-  const { teams, loading, members } = useSelector((state) => state.teams);
+  const { teams, loading } = useSelector((state) => state.teams);
   const [memberNames, setMemberNames] = useState({});
   const [selectedTeam, setSelectedTeam] = useState(null);
+  console.log("selectedTeam", selectedTeam?.name);
   const [open, setOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
@@ -78,11 +79,6 @@ const ManageUsers = () => {
   };
 
   // Handle delete user or team
-  const handleDeleteUser = (teamId, memberId) => {
-    setItemToDelete(`Member ${memberId}`);
-    setShowDeleteModal(true);
-  };
-
   const handleDeleteTeam = (teamId) => {
     setItemToDelete(`Team ${teamId}`);
     setShowDeleteModal(true);
@@ -99,15 +95,6 @@ const ManageUsers = () => {
     setShowDeleteModal(false);
     handleClose();
   };
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  // Handle opening the delete modal
-  const handleOpenDeleteModal = (team) => {
-    setSelectedTeam(team);
-    setIsDeleteModalOpen(true);
-  };
-
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white px-8 py-12">
       <h1 className="text-5xl font-extrabold mb-10 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -155,7 +142,7 @@ const ManageUsers = () => {
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-gray-700 rounded-lg p-6 w-1/3">
               <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
-              <p>Are you sure you want to delete {itemToDelete}?</p>{" "}
+              <p>Are you sure you want to delete?</p>{" "}
               {/* Update the text to reflect the item */}
               <div className="flex justify-between mt-4">
                 <button

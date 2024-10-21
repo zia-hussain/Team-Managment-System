@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { fetchUserName } from "../../redux/actions/action";
+import { toast } from "react-toastify";
 
 const ManageTeams = () => {
   const navigate = useNavigate();
@@ -51,32 +52,49 @@ const ManageTeams = () => {
   }, [dispatch]);
 
   const handleCreateTeam = async () => {
+    // Validate inputs
     if (
       !teamName ||
       !selectedCategory ||
       selectedUsers.length === 0 ||
       questions.some((q) => q.text.trim() === "")
-    )
+    ) {
+      toast.error("Please fill in all required fields!");
       return;
+    }
 
     const newTeamRef = ref(db, "teams/" + Date.now());
 
-    // Assuming you have a function to fetch user names based on selected user IDs
-    const memberDetails = await Promise.all(
-      selectedUsers.map(async (userId) => {
-        const name = await fetchUserName(userId); // Fetch user name by ID
-        return { id: userId, name }; // Create an object with id and name
-      })
-    );
+    try {
+      // Fetch user names for selected users
+      const memberDetails = await Promise.all(
+        selectedUsers.map(async (userId) => {
+          const name = await fetchUserName(userId); // Fetch user name by ID
+          return { id: userId, name }; // Create an object with id and name
+        })
+      );
 
-    await set(newTeamRef, {
-      name: teamName,
-      category: selectedCategory,
-      members: memberDetails, // Store both ID and name
-      questions: questions.map((q) => q.text),
-    });
+      // Set new team data to Firebase
+      await set(newTeamRef, {
+        name: teamName,
+        category: selectedCategory,
+        members: memberDetails, // Store both ID and name
+        questions: questions.map((q) => q.text),
+      });
 
-    // Reset form fields
+      // Show success message
+      toast.success("Team has been successfully added!");
+
+      // Reset form fields
+      resetFormFields();
+    } catch (error) {
+      console.error("Error creating team:", error);
+      toast.error("Something went wrong. Please try again!");
+    }
+  };
+
+  // Function to reset form fields
+  const resetFormFields = () => {
     setTeamName("");
     setSelectedCategory("");
     setSelectedUsers([]);
@@ -133,7 +151,14 @@ const ManageTeams = () => {
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
         Back
       </button>
-      <h1 className="text-5xl font-extrabold mb-4">Manage Teams</h1>
+      <h1
+        className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400
+
+ bg-clip-text text-transparent"
+      >
+        Create Teams
+      </h1>
+
       <p className="mt-2 text-gray-400 mb-8 text-center">
         Create and manage your teams below.
       </p>

@@ -10,6 +10,7 @@ import {
   faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { fetchUserName } from "../../redux/actions/action";
 
 const ManageTeams = () => {
   const navigate = useNavigate();
@@ -53,19 +54,29 @@ const ManageTeams = () => {
     if (
       !teamName ||
       !selectedCategory ||
-      // selectedUsers.length === 0 ||
+      selectedUsers.length === 0 ||
       questions.some((q) => q.text.trim() === "")
     )
       return;
 
     const newTeamRef = ref(db, "teams/" + Date.now());
+
+    // Assuming you have a function to fetch user names based on selected user IDs
+    const memberDetails = await Promise.all(
+      selectedUsers.map(async (userId) => {
+        const name = await fetchUserName(userId); // Fetch user name by ID
+        return { id: userId, name }; // Create an object with id and name
+      })
+    );
+
     await set(newTeamRef, {
       name: teamName,
       category: selectedCategory,
-      members: selectedUsers,
+      members: memberDetails, // Store both ID and name
       questions: questions.map((q) => q.text),
     });
 
+    // Reset form fields
     setTeamName("");
     setSelectedCategory("");
     setSelectedUsers([]);

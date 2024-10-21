@@ -2,6 +2,7 @@ import React from "react";
 
 const AnswerModal = ({ member, onClose, questions }) => {
   console.log(questions, "Questions");
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-lg w-full shadow-2xl transform transition-all duration-300 ease-in-out border border-gray-200 dark:border-gray-700">
@@ -33,23 +34,28 @@ const AnswerModal = ({ member, onClose, questions }) => {
         {/* Answer Content */}
         <div className="space-y-4">
           {questions.length > 0 ? (
-            questions.map((question, index) => (
-              <div key={index}>
-                <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                  {`Q-${index + 1} `}
-                  {question}
-                </p>
-                {member.answers && member.answers[index] ? (
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {member.answers[index]}
+            questions.map((question, index) => {
+              // Use question.id to find the corresponding answer
+              const answer = member.answers
+                ? member.answers[question.id]
+                : null;
+
+              return (
+                <div key={question.id}>
+                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                    {`Q-${index + 1} `}
+                    {question}
                   </p>
-                ) : (
-                  <p className="text-red-500">
-                    This person didn't respond to this question.
-                  </p>
-                )}
-              </div>
-            ))
+                  {answer ? (
+                    <p className="text-gray-600 dark:text-gray-400">{answer}</p>
+                  ) : (
+                    <p className="text-red-500">
+                      This person didn't respond to this question.
+                    </p>
+                  )}
+                </div>
+              );
+            })
           ) : (
             <p className="text-gray-500">No questions available.</p>
           )}

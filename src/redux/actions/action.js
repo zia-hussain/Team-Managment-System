@@ -6,6 +6,7 @@ import {
   remove,
   push,
   get,
+  update,
 } from "firebase/database";
 import {
   FETCH_TEAMS,
@@ -59,6 +60,7 @@ export const deleteTeam = (teamId) => (dispatch) => {
   });
 };
 
+// Fetch team members from Firebase
 export const fetchTeamMembers = (teamId) => async (dispatch) => {
   const db = getDatabase();
   const teamRef = ref(db, `teams/${teamId}/members`);
@@ -68,7 +70,6 @@ export const fetchTeamMembers = (teamId) => async (dispatch) => {
     const members = membersSnapshot.val();
 
     if (members) {
-      // Fetch details for each member by their uid from the `users` collection
       const userPromises = Object.keys(members).map(async (uid) => {
         const userRef = ref(db, `users/${uid}`);
         const userSnapshot = await get(userRef);
@@ -108,16 +109,40 @@ export const addMember = (teamId, member) => (dispatch) => {
 };
 
 // Delete a member from Firebase and Redux
-export const deleteMember = (teamId, memberId) => (dispatch) => {
+export const deleteMember = (teamId, memberId) => async (dispatch) => {
   const db = getDatabase(app);
-  remove(ref(db, `teams/${teamId}/members/${memberId}`)).then(() => {
+  try {
+    await remove(ref(db, `teams/${teamId}/members/${memberId}`));
+
     dispatch({
       type: DELETE_MEMBER,
       payload: { teamId, memberId },
     });
-  });
+  } catch (error) {
+    console.error("Error deleting member:", error);
+  }
 };
 
+// Join a team by its ID
+export const joinTeam = (teamId, userId) => (dispatch) => {
+  const db = getDatabase(app);
+  const membersRef = ref(db, `teams/${teamId}/members/`);
+
+  const newMember = { [userId]: true }; // Assuming you want to add the user ID with a simple boolean flag
+
+  update(membersRef, newMember)
+    .then(() => {
+      dispatch({
+        type: ADD_MEMBER,
+        payload: { teamId, memberId: userId, member: { id: userId } },
+      });
+    })
+    .catch((error) => {
+      console.error("Error joining team: ", error);
+    });
+};
+
+// Fetch user name from Firebase
 export const fetchUserName = async (userId) => {
   const db = getDatabase();
   const userRef = ref(db, `users/${userId}`);

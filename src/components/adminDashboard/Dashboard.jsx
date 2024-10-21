@@ -123,7 +123,7 @@ const AdminDashboard = () => {
                 : "bg-gray-200 text-gray-800 hover:bg-gray-300"
             }`}
           >
-            <h2 className="text-3xl font-bold">Manage Teams</h2>
+            <h2 className="text-3xl font-bold">Create Teams</h2>
             <p className="mt-2 text-gray-400 text-center">
               Create and manage teams and their members.
             </p>

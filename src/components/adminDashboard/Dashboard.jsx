@@ -1,45 +1,47 @@
-import React from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { fetchTeams } from "../../redux/actions/action";
 
 const AdminDashboard = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchTeams(dispatch));
+    // .then((res) => {
+    //   console.log(res, "hence chk");
+    // })
+    // .catch((err) => {
+    //   console.log(err, "hence chk");
+    // });
+  }, []);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-      <div className="max-w-7xl w-full px-8 py-12">
+      <div className="max-w-5xl w-full px-8 py-12 text-center">
         <h1 className="text-4xl font-extrabold">Admin Dashboard</h1>
         <p className="mt-4 text-gray-400">
           Welcome to the admin dashboard. Here you can manage users and view
           important data.
         </p>
 
-        {/* Example Admin Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        {/* Admin Actions */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8">
           <Link
             to="/manage-users"
-            className="p-6 bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition-colors duration-300"
+            className="p-8 bg-gray-800 rounded-lg shadow-lg hover:bg-gray-700 transition-colors duration-300 flex flex-col items-center justify-center"
           >
             <h2 className="text-2xl font-bold">Manage Users</h2>
-            <p className="mt-2 text-gray-400">
+            <p className="mt-2 text-gray-400 text-center">
               Add, remove, or update user information.
             </p>
           </Link>
 
           <Link
-            to="/view-reports"
-            className="p-6 bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition-colors duration-300"
+            to="/manage-teams"
+            className="p-8 bg-gray-800 rounded-lg shadow-lg hover:bg-gray-700 transition-colors duration-300 flex flex-col items-center justify-center"
           >
-            <h2 className="text-2xl font-bold">View Reports</h2>
-            <p className="mt-2 text-gray-400">
-              See detailed reports on system usage and user activity.
-            </p>
-          </Link>
-
-          <Link
-            to="/settings"
-            className="p-6 bg-gray-800 rounded-lg shadow hover:bg-gray-700 transition-colors duration-300"
-          >
-            <h2 className="text-2xl font-bold">Settings</h2>
-            <p className="mt-2 text-gray-400">
-              Manage system settings and configurations.
+            <h2 className="text-2xl font-bold">Manage Teams</h2>
+            <p className="mt-2 text-gray-400 text-center">
+              Create and manage teams and their members.
             </p>
           </Link>
         </div>

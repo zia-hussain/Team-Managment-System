@@ -123,25 +123,6 @@ export const deleteMember = (teamId, memberId) => async (dispatch) => {
   }
 };
 
-// Join a team by its ID
-export const joinTeam = (teamId, userId) => (dispatch) => {
-  const db = getDatabase(app);
-  const membersRef = ref(db, `teams/${teamId}/members/`);
-
-  const newMember = { [userId]: true }; // Assuming you want to add the user ID with a simple boolean flag
-
-  update(membersRef, newMember)
-    .then(() => {
-      dispatch({
-        type: ADD_MEMBER,
-        payload: { teamId, memberId: userId, member: { id: userId } },
-      });
-    })
-    .catch((error) => {
-      console.error("Error joining team: ", error);
-    });
-};
-
 // Fetch user name from Firebase
 export const fetchUserName = async (userId) => {
   const db = getDatabase();
@@ -161,3 +142,10 @@ export const fetchUserName = async (userId) => {
     return "Error";
   }
 };
+
+export const ADD_ANSWER = "ADD_ANSWER";
+
+export const addAnswer = (teamId, memberId, answer) => ({
+  type: ADD_ANSWER,
+  payload: { teamId, memberId, answer },
+});

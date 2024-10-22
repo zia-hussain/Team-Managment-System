@@ -55,24 +55,29 @@ export default function Component() {
   const handleClose = () => setOpen(false);
 
   const handleAnswerSubmit = () => {
-    if (!answer) return; // Prevent empty submissions
+    if (!answer || selectedQuestionIndex === null || !memberId) return; // Ensure answer, question, and member are selected
 
     const db = getDatabase();
-    const memberId = auth.currentUser.uid; // Get current user's ID
-    console.log(memberId);
-    const teamRef = ref(db, `teams/${teamId}/members/${memberId}/answers`);
+    const currentUserId = auth.currentUser.uid; // Get current user's ID
 
-    // Push a new answer under the specific member
-    const newAnswerRef = push(teamRef);
+    // Reference the specific user's answers in the database
+    const memberAnswersRef = ref(
+      db,
+      `teams/${teamId}/members/${currentUserId}/answers`
+    );
 
-    set(newAnswerRef, {
-      answer: answer,
-      timestamp: Date.now(), // Or use a Firebase server timestamp
-    })
+    // Save the answer under the selected question's index
+    const answerData = {
+      [selectedQuestionIndex]: answer,
+      timestamp: Date.now(), // Optionally use Firebase server timestamp
+    };
+
+    // Update the user's answers object, merging with existing answers
+    update(memberAnswersRef, answerData)
       .then(() => {
-        console.log("Answer submitted:", answer);
-        setAnswer(""); // Clear input after submission
-        handleClose(); // Close the modal
+        console.log("Answer submitted successfully:", answer);
+        setAnswer(""); // Clear input
+        handleClose(); // Close modal after submission
       })
       .catch((error) => {
         console.error("Error submitting answer:", error);

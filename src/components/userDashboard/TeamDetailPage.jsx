@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import { addAnswer } from "../../redux/actions/action";
 import { useDispatch } from "react-redux";
 import { auth } from "../../firebase/firebaseConfig";
+import { toast } from "react-toastify";
 
 export default function Component() {
   const dispatch = useDispatch();
@@ -55,31 +56,41 @@ export default function Component() {
   const handleClose = () => setOpen(false);
 
   const handleAnswerSubmit = () => {
-    if (!answer || selectedQuestionIndex === null || !memberId) return; // Ensure answer, question, and member are selected
-
-    const db = getDatabase();
     const currentUserId = auth.currentUser.uid; // Get current user's ID
 
-    // Reference the specific user's answers in the database
+    // Debugging logs
+    console.log("Answer:", answer);
+    console.log("Selected Question Index:", selectedQuestionIndex);
+    console.log("Member ID (current user):", currentUserId);
+
+    // Ensure answer, question, and member are selected
+    if (!answer || selectedQuestionIndex === null || !currentUserId) {
+      toast.error("Please fill in the answer and select a valid question!");
+      return;
+    }
+
+    const db = getDatabase();
+
     const memberAnswersRef = ref(
       db,
       `teams/${teamId}/members/${currentUserId}/answers`
     );
 
-    // Save the answer under the selected question's index
     const answerData = {
-      [selectedQuestionIndex]: answer,
-      timestamp: Date.now(), // Optionally use Firebase server timestamp
+      [selectedQuestionIndex]: {
+        answer: answer,
+        timestamp: Date.now(),
+      },
     };
 
-    // Update the user's answers object, merging with existing answers
     update(memberAnswersRef, answerData)
       .then(() => {
-        console.log("Answer submitted successfully:", answer);
-        setAnswer(""); // Clear input
-        handleClose(); // Close modal after submission
+        toast.success("Answer submitted successfully!");
+        setAnswer("");
+        handleClose();
       })
       .catch((error) => {
+        toast.error("Failed to submit answer. Please try again!");
         console.error("Error submitting answer:", error);
       });
   };

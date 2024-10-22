@@ -8,8 +8,6 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
   // Retrieve questions specific to the selected team
   const questions = selectedTeam.questions || []; // Access questions directly from the selected team
 
-  console.log(questions, "Questions");
-
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all duration-300 ease-in-out border border-gray-200 dark:border-gray-700">
@@ -40,32 +38,33 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
 
         {/* Members List */}
         <div className="space-y-4">
-          {selectedTeam.members && selectedTeam.members.length > 0 ? (
-            selectedTeam.members.map((member) => (
+          {selectedTeam.members &&
+          Object.keys(selectedTeam.members).length > 0 ? (
+            Object.entries(selectedTeam.members).map(([id, memberData]) => (
               <div
-                key={member.id}
+                key={id}
                 className="flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"
               >
                 <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                  {member.name}
+                  {memberData.name}
                 </span>
                 <div className="space-x-2">
                   <button
                     className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                    onClick={() => setSelectedMember(member)}
+                    onClick={() => setSelectedMember({ id, ...memberData })}
                   >
                     View Answers
                   </button>
                   <button
                     className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
                     onClick={() => {
-                      if (selectedTeam && member.id) {
-                        console.log(selectedTeam.id, member.id);
-                        onDeleteUser(selectedTeam.id, member.id); // Ensure teamId and member.id are passed
+                      if (selectedTeam && id) {
+                        console.log(selectedTeam.id, id);
+                        onDeleteUser(selectedTeam.id, id); // Pass teamId and member's id
                       } else {
                         console.error("Invalid team or member data", {
                           selectedTeam,
-                          member,
+                          id,
                         });
                       }
                     }}

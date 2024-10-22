@@ -50,12 +50,28 @@ const Dashboard = () => {
   const fetchUserTeams = async (userId) => {
     const userTeamsRef = ref(getDatabase(), `teams`);
     onValue(userTeamsRef, (snapshot) => {
-      const teamsData = snapshot.val() || {};
-      const teamList = Object.keys(teamsData).map((key) => ({
-        id: key,
-        ...teamsData[key],
-      }));
-      setTeams(teamList);
+      const teamsData = snapshot.val() || {}; // Fetch all teams from the DB
+      const userTeams = Object.keys(teamsData)
+        .filter((teamId) => {
+          const team = teamsData[teamId];
+          const members = team.members;
+
+          // Check if members exist and if userId is part of the team
+          if (Array.isArray(members)) {
+            // If members is an array, use includes
+            return members.includes(userId);
+          } else if (typeof members === "object" && members !== null) {
+            // If members is an object, use hasOwnProperty
+            return members.hasOwnProperty(userId);
+          }
+          return false;
+        })
+        .map((teamId) => ({
+          id: teamId,
+          ...teamsData[teamId],
+        }));
+
+      setTeams(userTeams); // Set the fetched teams for the UI
       setLoading(false); // Set loading to false once teams are fetched
     });
   };

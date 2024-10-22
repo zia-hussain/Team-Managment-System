@@ -7,7 +7,7 @@ import {
   deleteTeam,
 } from "../../redux/actions/action";
 import DetailModal from "../Modals/DetailModal";
-import { get, getDatabase, ref, set, update } from "firebase/database";
+import { get, getDatabase, ref, remove, set } from "firebase/database";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -80,44 +80,27 @@ const ManageUsers = () => {
   };
 
   // Handle delete user or team
-  const handleDeleteUser = (teamId, memberId) => {
+  const handleDeleteUser = async (teamId, memberId) => {
     const db = getDatabase();
-    const teamRef = ref(db, `teams/${teamId}/members`);
+    const memberRef = ref(db, `teams/${teamId}/members/${memberId}`); // Directly point to the member's reference
 
-    get(teamRef)
-      .then((snapshot) => {
-        const members = snapshot.val();
+    try {
+      // Remove the member from Firebase
+      await remove(memberRef);
+      console.log("Member deleted successfully");
 
-        if (!members) {
-          console.error("No members found for this team.");
-          return;
-        }
-
-        // Convert members object to an array if it's not already
-        const membersArray = Array.isArray(members)
-          ? members
-          : Object.keys(members).map((key) => ({
-              id: key,
-              ...members[key],
-            }));
-
-        // Filter out the member to delete
-        const updatedMembers = membersArray.filter(
-          (member) => member.id !== memberId
-        );
-
-        // Update the members in the database
-        update(teamRef, updatedMembers)
-          .then(() => {
-            console.log("Member deleted successfully");
-          })
-          .catch((error) => {
-            console.error("Error updating team members: ", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error fetching team members: ", error);
+      // Update UI by filtering out the deleted member
+      setSelectedTeam((prevTeam) => {
+        const updatedMembers = { ...prevTeam.members }; // Create a shallow copy
+        delete updatedMembers[memberId]; // Remove the member by ID
+        return {
+          ...prevTeam,
+          members: updatedMembers, // Update members in the state
+        };
       });
+    } catch (error) {
+      console.error("Error deleting user: ", error);
+    }
   };
 
   // Handle deleting a team

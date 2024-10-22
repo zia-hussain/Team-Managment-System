@@ -1,4 +1,7 @@
 const AnswerModal = ({ member, onClose, questions }) => {
+  // Log each answer for debugging
+  console.log("Member Answers: ", member.answers);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
       <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-lg w-full shadow-2xl transform transition-all duration-300 ease-in-out border border-gray-200 dark:border-gray-700">
@@ -30,23 +33,28 @@ const AnswerModal = ({ member, onClose, questions }) => {
         {/* Answer Content */}
         <div className="space-y-4">
           {questions.length > 0 ? (
-            questions.map((question, index) => (
-              <div key={index}>
-                <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                  {`Q-${index + 1} `}
-                  {question.text}
-                </p>
-                {member.answers && member.answers[question.id] ? (
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {member.answers[question.id]}
+            questions.map((question, index) => {
+              const userAnswer = member?.answers?.find(
+                (answer) => answer.questionId === question.id
+              );
+              return (
+                <div key={index}>
+                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                    {`Q-${index + 1} `}
+                    {question} {/* Assuming question has a text property */}
                   </p>
-                ) : (
-                  <p className="text-red-500">
-                    This person didn't respond to this question.
-                  </p>
-                )}
-              </div>
-            ))
+                  {userAnswer ? (
+                    <p className="text-gray-600 dark:text-gray-400">
+                      {userAnswer.answer} {/* Displaying the user's answer */}
+                    </p>
+                  ) : (
+                    <p className="text-red-500">
+                      This person didn't respond to this question.
+                    </p>
+                  )}
+                </div>
+              );
+            })
           ) : (
             <p className="text-gray-500">No questions available.</p>
           )}

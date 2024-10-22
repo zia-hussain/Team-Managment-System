@@ -118,7 +118,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         {/* Create Team Card */}
         <div
-          className={`rounded-lg shadow-lg p-5 flex flex-col items-center justify-center transition-transform transform hover:scale-105 ${
+          className={`rounded-lg shadow-lg p-5 flex flex-col items-center justify-center transition-transform transform ${
             darkMode
               ? "bg-gray-800 border-gray-700 text-gray-400"
               : "bg-white border-gray-300 text-gray-600"
@@ -137,7 +137,7 @@ const Dashboard = () => {
           </h2>
           <p className="text-center">Start a new team and become the leader!</p>
           <Link
-            to={"/manage-teams"}
+            to={"/create-teams"}
             className={`mt-4 px-4 py-2 ${
               darkMode
                 ? "bg-blue-600 hover:bg-blue-700 text-white"

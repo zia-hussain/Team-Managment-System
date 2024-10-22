@@ -7,66 +7,58 @@ import {
   deleteTeam,
 } from "../../redux/actions/action";
 import DetailModal from "../Modals/DetailModal";
-import { get, getDatabase, ref, remove, set } from "firebase/database";
+import { get, getDatabase, ref, set, update } from "firebase/database";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { db } from "../../firebase/firebaseConfig";
 
 const ManageUsers = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { teams, loading, members } = useSelector((state) => state.teams);
+  const { teams, loading } = useSelector((state) => state.teams);
   const [memberNames, setMemberNames] = useState({});
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [open, setOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
 
+  // Fetch user name by userId
   const fetchUserName = async (userId) => {
     const db = getDatabase();
     const userRef = ref(db, `users/${userId}`);
-
     try {
       const snapshot = await get(userRef);
       if (snapshot.exists()) {
         const userData = snapshot.val();
         return userData.name || "No Name";
-      } else {
-        return "No Data";
       }
     } catch (error) {
-      console.error("Error fetching user data: ", error);
-      return "Error";
+      console.error("Error fetching user data:", error);
     }
+    return "Error fetching name";
   };
 
+  // Fetch all teams on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await dispatch(fetchTeams(dispatch));
-      } catch (error) {
-        console.error("Error fetching teams: ", error);
-      }
-    };
-    fetchData();
+    dispatch(fetchTeams());
   }, [dispatch]);
 
+  // Fetch member names when teams are loaded
   useEffect(() => {
     const fetchMemberNames = async () => {
       const newMemberNames = {};
       for (let team of teams) {
-        if (team.members) {
+        if (team.members && team.members.length > 0) {
           const names = await Promise.all(
             team.members.map(async (memberId) => {
               const name = await fetchUserName(memberId);
               return { id: memberId, name };
             })
           );
-          newMemberNames[team.id] = names; // Store team member names by team ID
+          newMemberNames[team.id] = names;
         }
       }
-      setMemberNames(newMemberNames); // Update state with all names
+      setMemberNames(newMemberNames); // Store member names
     };
 
     if (teams.length > 0) {
@@ -74,63 +66,61 @@ const ManageUsers = () => {
     }
   }, [teams]);
 
+  // Handle opening the details modal for a team
   const handleOpen = (team) => {
     setSelectedTeam(team);
-    dispatch(fetchTeamMembers(team.id)); // Fetch members for the selected team
+    dispatch(fetchTeamMembers(team.id)); // Fetch team members
     setOpen(true);
   };
 
+  // Handle closing the modal
   const handleClose = () => {
     setOpen(false);
     setSelectedTeam(null);
   };
 
-  const handleDeleteUser = async (
-    teamId,
-    userId,
-    currentMembers,
-    setCurrentMembers
-  ) => {
-    if (!teamId || !userId) {
-      console.error("Invalid teamId or userId", { teamId, userId });
-      return;
-    }
+  // Handle delete user or team
+  const handleDeleteUser = (teamId, memberId) => {
+    const db = getDatabase();
+    const teamRef = ref(db, `teams/${teamId}/members`);
 
-    try {
-      const teamRef = ref(db, `teams/${teamId}`);
-      const teamSnapshot = await get(teamRef);
-      handleClose();
+    get(teamRef)
+      .then((snapshot) => {
+        const members = snapshot.val();
 
-      if (teamSnapshot.exists()) {
-        const teamData = teamSnapshot.val();
-        const members = teamData.members || [];
-
-        const memberIndex = members.findIndex((member) => member.id === userId);
-
-        if (memberIndex !== -1) {
-          members.splice(memberIndex, 1);
-
-          await set(teamRef, {
-            ...teamData,
-            members,
-          });
-
-          setCurrentMembers((prevMembers) =>
-            prevMembers.filter((member) => member.id !== userId)
-          );
-
-          dispatch(deleteMember(userId));
-        } else {
-          console.error("User not found in team members", userId);
+        if (!members) {
+          console.error("No members found for this team.");
+          return;
         }
-      } else {
-        console.error("Team does not exist", teamId);
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
+
+        // Convert members object to an array if it's not already
+        const membersArray = Array.isArray(members)
+          ? members
+          : Object.keys(members).map((key) => ({
+              id: key,
+              ...members[key],
+            }));
+
+        // Filter out the member to delete
+        const updatedMembers = membersArray.filter(
+          (member) => member.id !== memberId
+        );
+
+        // Update the members in the database
+        update(teamRef, updatedMembers)
+          .then(() => {
+            console.log("Member deleted successfully");
+          })
+          .catch((error) => {
+            console.error("Error updating team members: ", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error fetching team members: ", error);
+      });
   };
 
+  // Handle deleting a team
   const handleDeleteTeam = (teamId) => {
     setItemToDelete(`Team ${teamId}`);
     setShowDeleteModal(true);
@@ -140,9 +130,6 @@ const ManageUsers = () => {
     if (itemToDelete.startsWith("Team")) {
       const teamId = itemToDelete.split(" ")[1];
       dispatch(deleteTeam(teamId));
-    } else {
-      const memberId = itemToDelete.split(" ")[1];
-      dispatch(deleteMember(selectedTeam.id, memberId));
     }
     setShowDeleteModal(false);
     handleClose();
@@ -168,36 +155,34 @@ const ManageUsers = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
         {loading ? (
           <p className="text-white">Loading...</p>
-        ) : teams.length > 0 ? (
-          teams.map((team) => (
-            <div
-              key={team.id}
-              className="bg-gray-800 rounded-lg p-6 shadow-lg hover:bg-gray-700 transition cursor-pointer"
-              onClick={() => handleOpen(team)}
-            >
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold">{team.name}</h2>
-              </div>
-              <p className="text-gray-400 mt-2">
-                Created on: {team.members ? team.members.length : 0}
-              </p>
-              <button
-                className="mt-4 bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors w-full"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteTeam(team.id);
-                }}
-              >
-                <FontAwesomeIcon icon={faTrash} /> Delete Team
-              </button>
-            </div>
-          ))
         ) : (
-          <p className="text-white">No teams found.</p>
+          teams?.map((team) => {
+            const memberCount = team.members
+              ? Object.keys(team.members).length
+              : 0;
+            return (
+              <div
+                key={team.id}
+                className="bg-gray-800 rounded-lg p-6 shadow-lg hover:bg-gray-700 transition cursor-pointer"
+                onClick={() => handleOpen(team)}
+              >
+                <h2 className="text-2xl font-bold">{team.name}</h2>
+                <p className="text-gray-400 mt-2">Members: {memberCount}</p>
+                <button
+                  className="mt-4 bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors w-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteTeam(team.id);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrash} /> Delete Team
+                </button>
+              </div>
+            );
+          })
         )}
       </div>
 
-      {/* Delete confirmation modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-700 rounded-lg p-6 w-1/3">

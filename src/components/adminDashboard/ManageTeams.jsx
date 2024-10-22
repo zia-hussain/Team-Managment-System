@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase/firebaseConfig";
-import { ref, onValue, set } from "firebase/database";
+import { ref, onValue, set, getDatabase } from "firebase/database";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUsers, fetchUsers } from "../../redux/features/userSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -63,6 +63,7 @@ const ManageTeams = () => {
       return;
     }
 
+    const db = getDatabase();
     const newTeamRef = ref(db, "teams/" + Date.now());
 
     try {
@@ -74,12 +75,18 @@ const ManageTeams = () => {
         })
       );
 
+      // Create a members object where each key is the user's id
+      const members = memberDetails.reduce((acc, member) => {
+        acc[member.id] = { name: member.name, answers: {} }; // Add empty answers object for each member
+        return acc;
+      }, {});
+
       // Set new team data to Firebase
       await set(newTeamRef, {
         name: teamName,
         category: selectedCategory,
-        members: memberDetails, // Store both ID and name
-        questions: questions.map((q) => q.text),
+        members, // Store each member's details under their actual id
+        questions: questions.map((q) => q.text), // Store the questions
       });
 
       // Show success message

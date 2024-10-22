@@ -10,15 +10,15 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all duration-300 ease-in-out border border-gray-200 dark:border-gray-700">
+      <div className="bg-gray-900 rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all duration-300 ease-in-out border border-gray-800">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          <h2 className="text-2xl font-bold text-gray-100">
             {title || "Team Members"}
           </h2>
           <button
             onClick={onCancel}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
+            className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
           >
             <svg
               className="w-6 h-6"
@@ -43,24 +43,23 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
             Object.entries(selectedTeam.members).map(([id, memberData]) => (
               <div
                 key={id}
-                className="flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"
+                className="flex justify-between items-center p-4 bg-gray-800 rounded-lg shadow transition-transform transform"
               >
-                <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                <span className="text-lg font-semibold text-gray-300">
                   {memberData.name}
                 </span>
                 <div className="space-x-2">
                   <button
-                    className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                    className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-500 transition-colors duration-200"
                     onClick={() => setSelectedMember({ id, ...memberData })}
                   >
                     View Answers
                   </button>
                   <button
-                    className="bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                    className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-500 transition-colors duration-200"
                     onClick={() => {
                       if (selectedTeam && id) {
-                        console.log(selectedTeam.id, id);
-                        onDeleteUser(selectedTeam.id, id); // Pass teamId and member's id
+                        onDeleteUser(selectedTeam.id, id);
                       } else {
                         console.error("Invalid team or member data", {
                           selectedTeam,
@@ -75,14 +74,14 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500">No members found.</p>
+            <p className="text-gray-400">No members found.</p>
           )}
         </div>
 
         {/* Close Button */}
         <button
           onClick={onCancel}
-          className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105"
+          className="mt-8 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 transform"
         >
           Close
         </button>

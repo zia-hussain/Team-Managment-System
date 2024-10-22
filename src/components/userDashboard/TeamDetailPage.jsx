@@ -8,13 +8,16 @@ import {
   update,
 } from "firebase/database";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { addAnswer } from "../../redux/actions/action";
 import { useDispatch } from "react-redux";
 import { auth } from "../../firebase/firebaseConfig";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function Component() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { teamId } = useParams();
   const [teamDetails, setTeamDetails] = useState(null);
@@ -97,8 +100,19 @@ export default function Component() {
 
   if (!teamDetails) return <div className="loading">Loading...</div>;
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-8 flex items-center justify-center">
+      <button
+        className="absolute left-10 top-10 flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
+        onClick={handleBackClick}
+      >
+        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+        Back
+      </button>
       <div className="w-full max-w-4xl bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
         <div className="p-8 space-y-8">
           <div className="space-y-2">

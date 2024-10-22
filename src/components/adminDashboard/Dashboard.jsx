@@ -116,7 +116,7 @@ const AdminDashboard = () => {
           </Link>
 
           <Link
-            to="/manage-teams"
+            to="/create-teams"
             className={`p-14 rounded-lg shadow-lg transition-colors duration-300 flex flex-col items-center justify-center ${
               darkMode
                 ? "bg-gray-800 text-white hover:bg-gray-700"

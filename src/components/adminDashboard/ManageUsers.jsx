@@ -10,7 +10,8 @@ import DetailModal from "../Modals/DetailModal";
 import { get, getDatabase, ref, remove, set } from "firebase/database";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
 const ManageUsers = () => {
   const navigate = useNavigate();
@@ -125,7 +126,7 @@ const ManageUsers = () => {
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white px-8 py-12">
       <button
-        className="absolute left-10 top-10 flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
+        className="absolute left-10 top-10 lg:flex hidden items-center text-blue-400 hover:text-blue-600 transition duration-200"
         onClick={handleBackClick}
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
@@ -137,9 +138,35 @@ const ManageUsers = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
         {loading ? (
-          <p className="text-white">Loading...</p>
+          // Skeleton loader for loading state
+          <>
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="bg-gray-800 rounded-lg p-6 shadow-lg">
+                <Skeleton variant="text" width="80%" height={40} />
+                <Skeleton
+                  variant="text"
+                  width="60%"
+                  height={30}
+                  className="mt-2"
+                />
+                <Skeleton variant="rectangular" height={40} className="mt-4" />
+              </div>
+            ))}
+          </>
+        ) : teams.length === 0 ? (
+          // Fallback UI for no teams
+          <div className="w-[85vw] mt-14 h-full flex items-center justify-center">
+            <div className="bg-gray-800 rounded-lg p-6 shadow-lg w-full md:w-1/3 flex flex-col items-center">
+              <h2 className="text-2xl font-bold text-gray-400">
+                No Teams Available
+              </h2>
+              <p className="text-gray-500 mt-2">
+                Please create a new team to get started.
+              </p>
+            </div>
+          </div>
         ) : (
-          teams?.map((team) => {
+          teams.map((team) => {
             const memberCount = team.members
               ? Object.keys(team.members).length
               : 0;

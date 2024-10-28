@@ -6,12 +6,16 @@ import {
   deleteMember,
   deleteTeam,
 } from "../../redux/actions/action";
+import DarkModeToggle from "@mui/icons-material/Brightness4";
+import LightModeToggle from "@mui/icons-material/Brightness7";
 import DetailModal from "../Modals/DetailModal";
 import { get, getDatabase, ref, remove, set } from "firebase/database";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
+import LogoutModal from "../Modals/LogoutModal";
+import { logout } from "../../redux/features/authSlice";
 
 const ManageUsers = () => {
   const navigate = useNavigate();
@@ -22,6 +26,8 @@ const ManageUsers = () => {
   const [open, setOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
+  const [darkMode, setDarkMode] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Fetch user name by userId
   const fetchUserName = async (userId) => {
@@ -123,15 +129,47 @@ const ManageUsers = () => {
     navigate(-1);
   };
 
+  const toggleTheme = () => {
+    setDarkMode((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    dispatch(logout());
+    setShowLogoutModal(false);
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white px-8 py-12">
-      <button
-        className="absolute left-10 top-10 lg:flex hidden items-center text-blue-400 hover:text-blue-600 transition duration-200"
-        onClick={handleBackClick}
-      >
-        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-        Back
-      </button>
+    <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white p-5">
+      <div className="flex items-center justify-between w-full">
+        <button
+          className="hidden lg:flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
+          onClick={handleBackClick}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+          Back
+        </button>
+
+        <div className="flex items-center">
+          <div className="cursor-pointer" onClick={toggleTheme}>
+            {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
+          </div>
+
+          <button
+            className="ml-4 px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
       <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
         Manage Teams & Users
       </h1>
@@ -222,6 +260,10 @@ const ManageUsers = () => {
           onCancel={handleClose}
           onDeleteUser={handleDeleteUser}
         />
+      )}
+
+      {showLogoutModal && (
+        <LogoutModal onConfirm={confirmLogout} onCancel={cancelLogout} />
       )}
     </div>
   );

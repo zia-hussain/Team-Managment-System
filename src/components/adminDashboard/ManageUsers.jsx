@@ -157,7 +157,7 @@ const ManageUsers = () => {
           Back
         </button>
 
-        <div className="flex items-center">
+        <div className="flex lg:justify-end justify-between items-center w-full float-end">
           <div className="cursor-pointer" onClick={toggleTheme}>
             {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
           </div>
@@ -170,7 +170,8 @@ const ManageUsers = () => {
           </button>
         </div>
       </div>
-      <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
+
+      <h1 className="mt-4 lg:mt-0 text-5xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
         Manage Teams & Users
       </h1>
 
@@ -193,12 +194,12 @@ const ManageUsers = () => {
           </>
         ) : teams.length === 0 ? (
           // Fallback UI for no teams
-          <div className="w-[85vw] mt-14 h-full flex items-center justify-center">
-            <div className="bg-gray-800 rounded-lg p-6 shadow-lg w-full md:w-1/3 flex flex-col items-center">
-              <h2 className="text-2xl font-bold text-gray-400">
+          <div className="h-[50vh]  flex items-center justify-center bg-gray-900">
+            <div className="bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md flex flex-col items-center mx-auto">
+              <h2 className="text-2xl font-bold text-gray-400 text-center">
                 No Teams Available
               </h2>
-              <p className="text-gray-500 mt-2">
+              <p className="text-gray-500 mt-2 text-center">
                 Please create a new team to get started.
               </p>
             </div>

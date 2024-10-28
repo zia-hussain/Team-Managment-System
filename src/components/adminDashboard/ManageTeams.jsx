@@ -17,6 +17,8 @@ import { toast } from "react-toastify";
 import LogoutModal from "../Modals/LogoutModal";
 import { logout } from "../../redux/features/authSlice";
 import { MenuItem, Select } from "@mui/material";
+import { toggleDarkMode } from "../../redux/features/themeSlice";
+import { dark } from "@mui/material/styles/createPalette";
 
 const ManageTeams = () => {
   const navigate = useNavigate();
@@ -27,9 +29,12 @@ const ManageTeams = () => {
   const [filter, setFilter] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [questions, setQuestions] = useState([{ id: Date.now(), text: "" }]);
-  const [darkMode, setDarkMode] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const darkMode = useSelector((state) => state.theme.darkMode);
 
+  const handleToggleTheme = () => {
+    dispatch(toggleDarkMode());
+  };
   const categories = ["Marketing", "Sales", "Development", "Design"];
 
   useEffect(() => {
@@ -156,10 +161,6 @@ const ManageTeams = () => {
     navigate(-1); // Navigate back to the previous page
   };
 
-  const toggleTheme = () => {
-    setDarkMode((prev) => !prev);
-  };
-
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
@@ -174,69 +175,103 @@ const ManageTeams = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-900 text-white p-5 hide-scrollbar overflow-hidden">
+    <div
+      className={`min-h-screen w-full flex flex-col items-center justify-center ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"
+      } p-5 hide-scrollbar overflow-hidden`}
+    >
       <div className="flex items-center justify-between w-full">
         <button
-          className="hidden lg:flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
+          className={`hidden lg:flex items-center ${
+            darkMode
+              ? "text-blue-400 hover:text-blue-500"
+              : "text-blue-600 hover:text-blue-800"
+          } transition duration-200`}
           onClick={handleBackClick}
         >
           <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
           Back
         </button>
 
-        <div className="flex lg:justify-end justify-between items-center w-full float-end">
-          <div className="cursor-pointer" onClick={toggleTheme}>
+        <div className="flex lg:justify-end justify-between items-center w-full">
+          <div className="cursor-pointer" onClick={handleToggleTheme}>
             {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
           </div>
 
           <button
-            className="ml-4 px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded"
+            className={`ml-4 px-3 py-2 ${
+              darkMode
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-red-600 hover:bg-red-700"
+            } text-white font-semibold rounded`}
             onClick={handleLogout}
           >
             Logout
           </button>
         </div>
       </div>
+
       <div className="mt-4 mb-2 lg:mt-0">
-        <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
+        <h1
+          className={`text-5xl font-extrabold mb-4 bg-gradient-to-r ${
+            darkMode ? "from-sky-300 to-blue-500" : "from-blue-500 to-blue-700"
+          } bg-clip-text text-transparent`}
+        >
           Create Teams
         </h1>
 
-        <p className="mt-2 text-gray-400 mb-8 text-center">
+        <p
+          className={`${
+            darkMode ? "text-gray-400" : "text-gray-600"
+          } mt-2 mb-8 text-center`}
+        >
           Create and manage your teams below.
         </p>
       </div>
 
-      <div className="bg-gray-800 rounded-lg p-8 w-[95vw] md:max-w-lg shadow-lg ">
+      <div
+        className={`${
+          darkMode ? "bg-gray-800" : "bg-white"
+        } rounded p-8 w-[95vw] md:max-w-lg shadow-lg`}
+      >
         <h2 className="text-4xl font-bold mb-6">Create a New Team</h2>
 
-        {/* Team Category Selection */}
         <div className="mb-6">
-          <label className="block mb-2 text-gray-300">
+          <label
+            className={`${
+              darkMode ? "text-gray-300" : "text-gray-800"
+            } block mb-2`}
+          >
             Select Team Category
           </label>
           <Select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             displayEmpty
-            className="w-full bg-gray-700 !text-gray-300 !rounded-lg"
+            className={`w-full ${
+              darkMode
+                ? "bg-gray-700 text-gray-300"
+                : "bg-gray-200 text-gray-800"
+            } rounded`}
             inputProps={{ "aria-label": "Select Team Category" }}
             MenuProps={{
               PaperProps: {
                 sx: {
-                  backgroundColor: "#374151",
-                  color: "#FFFFFF",
+                  backgroundColor: darkMode ? "#374151" : "#FFFFFF",
+                  color: darkMode ? "#FFFFFF" : "#000000",
                 },
               },
             }}
             sx={{
               "& .MuiSelect-icon": {
-                color: "#9CA3AF", // Change color here
+                color: darkMode ? "#9CA3AF" : "#6B7280",
               },
             }}
           >
             <MenuItem value="" disabled selected>
-              Choose a category...
+              <p className={`${darkMode ? "text-white" : ""}`}>
+                Choose a category...
+              </p>
             </MenuItem>
             {categories.map((category, index) => (
               <MenuItem
@@ -244,9 +279,9 @@ const ManageTeams = () => {
                 value={category}
                 sx={{
                   "&:hover": {
-                    backgroundColor: "#4b5563", // Hover background color
+                    backgroundColor: darkMode ? "#4b5563" : "#E5E7EB",
                   },
-                  color: "#FFFFFF", // Optional: Text color
+                  color: darkMode ? "#FFFFFF" : "#000000",
                 }}
               >
                 {category}
@@ -255,21 +290,33 @@ const ManageTeams = () => {
           </Select>
         </div>
 
-        {/* Team Name Input */}
         <div className="mb-6">
-          <label className="block mb-2 text-gray-300">Team Name</label>
+          <label
+            className={`${
+              darkMode ? "text-gray-300" : "text-gray-800"
+            } block mb-2`}
+          >
+            Team Name
+          </label>
           <input
             type="text"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
             placeholder="Enter team name"
-            className="w-full p-4 bg-gray-700 rounded-lg text-white placeholder-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full p-4 ${
+              darkMode
+                ? "bg-gray-700 text-white placeholder-gray-400"
+                : "bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-400 hover:border-gray-700 focus:border-blue-500"
+            } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 `}
           />
         </div>
 
-        {/* User Filter Input */}
         <div className="mb-6 relative">
-          <label className="block mb-2 text-gray-300 text-sm font-medium">
+          <label
+            className={`${
+              darkMode ? "text-gray-300" : "text-gray-800"
+            } block mb-2 text-sm font-medium`}
+          >
             Add Members
           </label>
           <div className="relative">
@@ -278,28 +325,41 @@ const ManageTeams = () => {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               placeholder="Filter users by name"
-              className="w-full p-4 pr-10 bg-gray-700 rounded-lg text-white placeholder-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={`w-full p-4 pr-10 ${
+                darkMode
+                  ? "bg-gray-700 text-white placeholder-gray-400"
+                  : "bg-gray-100 text-gray-800 placeholder-gray-500"
+              } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500`}
             />
           </div>
-
-          {/* User List */}
           {filter && (
-            <ul className="absolute mt-2 bg-gray-800 rounded-lg max-h-60 w-full overflow-y-auto border border-gray-700 shadow-lg z-10">
+            <ul
+              className={`absolute mt-2 ${
+                darkMode
+                  ? "bg-gray-800 border-gray-700"
+                  : "bg-white border-gray-300"
+              } rounded max-h-60 w-full overflow-y-auto border shadow-lg z-10`}
+            >
               {users
                 .filter((user) =>
                   user.name.toLowerCase().includes(filter.toLowerCase())
                 )
-                .slice(0, 15) // Limit displayed users to 15 for better UX
+                .slice(0, 15)
                 .map((user) => (
                   <li
                     key={user.id}
-                    className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-700 ${
-                      selectedUsers.includes(user.id) ? "bg-gray-600" : ""
+                    className={`flex justify-between items-center px-4 py-2 cursor-pointer ${
+                      darkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"
+                    } ${
+                      selectedUsers.includes(user.id)
+                        ? darkMode
+                          ? "bg-gray-600"
+                          : "bg-gray-300"
+                        : ""
                     } transition duration-200`}
                     onClick={() => handleUserSelection(user.id)}
                   >
-                    {highlightText(user.name, filter)}{" "}
-                    {/* Highlight matching text */}
+                    {highlightText(user.name, filter)}
                   </li>
                 ))}
               {users.filter((user) =>
@@ -313,9 +373,14 @@ const ManageTeams = () => {
           )}
         </div>
 
-        {/* Questions Input Section */}
         <div className="mb-6">
-          <label className="block mb-2 text-gray-300">Questions</label>
+          <label
+            className={`${
+              darkMode ? "text-gray-300" : "text-gray-800"
+            } block mb-2`}
+          >
+            Questions
+          </label>
           {questions.map((question) => (
             <div key={question.id} className="flex items-center mb-3">
               <input
@@ -325,21 +390,33 @@ const ManageTeams = () => {
                   handleQuestionChange(question.id, e.target.value)
                 }
                 placeholder="Enter your question"
-                className="flex-1 p-3 border border-gray-400 rounded mr-2 bg-gray-700 text-white placeholder-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`flex-1 p-4 border ${
+                  darkMode
+                    ? "bg-gray-700 text-white placeholder-gray-400"
+                    : "bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-400"
+                } rounded mr-2 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 `}
               />
               <button
                 type="button"
                 onClick={() => handleRemoveQuestion(question.id)}
-                className="bg-red-500 p-3 rounded hover:bg-red-600 transition duration-200"
+                className={`p-3 rounded ${
+                  darkMode
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-red-600 hover:bg-red-700"
+                } transition duration-200`}
               >
-                <FontAwesomeIcon width={20} icon={faTrash} />
+                <FontAwesomeIcon width={20} icon={faTrash} color="#fff" />
               </button>
             </div>
           ))}
           <button
             type="button"
             onClick={handleAddQuestion}
-            className="bg-blue-500 w-full p-3 rounded hover:bg-blue-600 transition duration-200"
+            className={`w-full p-3 rounded text-white ${
+              darkMode
+                ? "bg-blue-500 hover:bg-blue-600"
+                : "bg-blue-600 hover:bg-blue-700"
+            } transition duration-200`}
           >
             <FontAwesomeIcon width={20} icon={faPlus} />
             <span className="ml-2">Add Question</span>
@@ -348,7 +425,11 @@ const ManageTeams = () => {
 
         <button
           onClick={handleCreateTeam}
-          className="w-full p-4 bg-blue-600 rounded-lg hover:bg-blue-500 transition-colors duration-300"
+          className={`w-full p-4 rounded text-white font-bold text-xl ${
+            darkMode
+              ? "bg-blue-600 hover:bg-blue-500"
+              : "bg-blue-700 hover:bg-blue-600"
+          } transition-colors duration-300`}
         >
           Create Team
         </button>

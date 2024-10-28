@@ -184,7 +184,7 @@ const ManageTeams = () => {
           Back
         </button>
 
-        <div className="flex items-center">
+        <div className="flex lg:justify-end justify-between items-center w-full float-end">
           <div className="cursor-pointer" onClick={toggleTheme}>
             {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
           </div>
@@ -197,15 +197,17 @@ const ManageTeams = () => {
           </button>
         </div>
       </div>
-      <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
-        Create Teams
-      </h1>
+      <div className="mt-4 mb-2 lg:mt-0">
+        <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
+          Create Teams
+        </h1>
 
-      <p className="mt-2 text-gray-400 mb-8 text-center">
-        Create and manage your teams below.
-      </p>
+        <p className="mt-2 text-gray-400 mb-8 text-center">
+          Create and manage your teams below.
+        </p>
+      </div>
 
-      <div className="bg-gray-800 rounded-lg p-8 w-full max-w-lg shadow-lg ">
+      <div className="bg-gray-800 rounded-lg p-8 w-[95vw] md:max-w-lg shadow-lg ">
         <h2 className="text-4xl font-bold mb-6">Create a New Team</h2>
 
         {/* Team Category Selection */}

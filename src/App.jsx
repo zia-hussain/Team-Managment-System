@@ -5,7 +5,6 @@ import store from "./redux/store"; // Adjust the path if necessary
 import Dashboard from "./components/userDashboard/Dashboard";
 import Login from "./components/user/login/Login";
 import Signup from "./components/user/signup/Signup";
-import AdminLogin from "./components/admin/login/AdminLogin";
 import PrivateRoute from "./components/PrivateRoute"; // Adjust the path if necessary
 import "react-toastify/dist/ReactToastify.css"; // Import CSS for toast notifications
 import AdminDashboard from "./components/adminDashboard/Dashboard";

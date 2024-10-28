@@ -69,7 +69,7 @@ const ShopCreate = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 select-none">
-      <div className="max-w-7xl w-full h-screen grid grid-cols-1 lg:grid-cols-2 overflow-auto">
+      <div className="w-full h-screen grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
         {/* Left side - Image */}
         <div
           className="hidden lg:block bg-cover bg-center relative"
@@ -171,6 +171,19 @@ const ShopCreate = () => {
                   required
                   className="appearance-none block w-full px-3 py-3 border border-gray-700 rounded-md bg-gray-900 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
+                {visibleConfirm ? (
+                  <AiOutlineEye
+                    className="absolute right-3 top-3 cursor-pointer text-gray-400"
+                    size={25}
+                    onClick={() => setVisibleConfirm(false)}
+                  />
+                ) : (
+                  <AiOutlineEyeInvisible
+                    className="absolute right-3 top-3 cursor-pointer text-gray-400"
+                    size={25}
+                    onClick={() => setVisibleConfirm(true)}
+                  />
+                )}
               </div>
 
               {/* Error Message */}

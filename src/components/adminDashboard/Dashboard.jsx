@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchTeams } from "../../redux/actions/action";
 import DarkModeToggle from "@mui/icons-material/Brightness4"; // Icon for dark mode
@@ -9,13 +9,18 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig";
 import LogoutModal from "../Modals/LogoutModal";
 import { logout } from "../../redux/features/authSlice";
+import { toggleDarkMode } from "../../redux/features/themeSlice";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState(""); // State to hold the username
   const [showLogoutModal, setShowLogoutModal] = useState(false); // State to control modal visibility
-  const [darkMode, setDarkMode] = useState(true); // Default to dark mode
   const [loading, setLoading] = useState(true); // State to track loading
+  const darkMode = useSelector((state) => state.theme.darkMode);
+
+  const handleToggleTheme = () => {
+    dispatch(toggleDarkMode());
+  };
 
   const fetchUsername = async (userId) => {
     const userNameRef = ref(getDatabase(), `users/${userId}/name`);
@@ -28,10 +33,6 @@ const AdminDashboard = () => {
       }
       setLoading(false);
     });
-  };
-
-  const toggleTheme = () => {
-    setDarkMode((prev) => !prev);
   };
 
   const handleLogout = () => {
@@ -75,7 +76,7 @@ const AdminDashboard = () => {
         </h1>
 
         <div className="flex items-center">
-          <div className="cursor-pointer" onClick={toggleTheme}>
+          <div className="cursor-pointer" onClick={handleToggleTheme}>
             {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
           </div>
 

@@ -9,9 +9,14 @@ import {
   faPlus,
   faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
+import DarkModeToggle from "@mui/icons-material/Brightness4";
+import LightModeToggle from "@mui/icons-material/Brightness7";
 import { useNavigate } from "react-router-dom";
 import { fetchUserName } from "../../redux/actions/action";
 import { toast } from "react-toastify";
+import LogoutModal from "../Modals/LogoutModal";
+import { logout } from "../../redux/features/authSlice";
+import { MenuItem, Select } from "@mui/material";
 
 const ManageTeams = () => {
   const navigate = useNavigate();
@@ -22,6 +27,8 @@ const ManageTeams = () => {
   const [filter, setFilter] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [questions, setQuestions] = useState([{ id: Date.now(), text: "" }]);
+  const [darkMode, setDarkMode] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const categories = ["Marketing", "Sales", "Development", "Design"];
 
@@ -149,20 +156,48 @@ const ManageTeams = () => {
     navigate(-1); // Navigate back to the previous page
   };
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white px-8 py-12">
-      <button
-        className="absolute left-10 top-10 flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
-        onClick={handleBackClick}
-      >
-        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-        Back
-      </button>
-      <h1
-        className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400
+  const toggleTheme = () => {
+    setDarkMode((prev) => !prev);
+  };
 
- bg-clip-text text-transparent"
-      >
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    dispatch(logout());
+    setShowLogoutModal(false);
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
+  };
+
+  return (
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-900 text-white p-5 hide-scrollbar overflow-hidden">
+      <div className="flex items-center justify-between w-full">
+        <button
+          className="hidden lg:flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
+          onClick={handleBackClick}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+          Back
+        </button>
+
+        <div className="flex items-center">
+          <div className="cursor-pointer" onClick={toggleTheme}>
+            {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
+          </div>
+
+          <button
+            className="ml-4 px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+      <h1 className="text-5xl font-extrabold mb-4 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
         Create Teams
       </h1>
 
@@ -170,7 +205,7 @@ const ManageTeams = () => {
         Create and manage your teams below.
       </p>
 
-      <div className="bg-gray-800 rounded-lg p-8 w-full max-w-lg shadow-lg">
+      <div className="bg-gray-800 rounded-lg p-8 w-full max-w-lg shadow-lg ">
         <h2 className="text-4xl font-bold mb-6">Create a New Team</h2>
 
         {/* Team Category Selection */}
@@ -178,18 +213,44 @@ const ManageTeams = () => {
           <label className="block mb-2 text-gray-300">
             Select Team Category
           </label>
-          <select
+          <Select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full p-4 bg-gray-700 rounded-lg text-white placeholder-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            displayEmpty
+            className="w-full bg-gray-700 !text-gray-300 !rounded-lg"
+            inputProps={{ "aria-label": "Select Team Category" }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: "#374151",
+                  color: "#FFFFFF",
+                },
+              },
+            }}
+            sx={{
+              "& .MuiSelect-icon": {
+                color: "#9CA3AF", // Change color here
+              },
+            }}
           >
-            <option value="">Choose a category...</option>
+            <MenuItem value="" disabled selected>
+              Choose a category...
+            </MenuItem>
             {categories.map((category, index) => (
-              <option key={index} value={category}>
+              <MenuItem
+                key={index}
+                value={category}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#4b5563", // Hover background color
+                  },
+                  color: "#FFFFFF", // Optional: Text color
+                }}
+              >
                 {category}
-              </option>
+              </MenuItem>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* Team Name Input */}
@@ -206,18 +267,22 @@ const ManageTeams = () => {
 
         {/* User Filter Input */}
         <div className="mb-6 relative">
-          <label className="block mb-2 text-gray-300">Add Members</label>
-          <input
-            type="text"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder="Filter users by name"
-            className="w-full p-4 bg-gray-700 rounded-lg text-white placeholder-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <label className="block mb-2 text-gray-300 text-sm font-medium">
+            Add Members
+          </label>
+          <div className="relative">
+            <input
+              type="text"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              placeholder="Filter users by name"
+              className="w-full p-4 pr-10 bg-gray-700 rounded-lg text-white placeholder-gray-400 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           {/* User List */}
           {filter && (
-            <ul className=" z-10 mt-2 bg-gray-800 rounded-lg max-h-60 w-full overflow-y-auto border border-gray-700 shadow-lg">
+            <ul className="absolute mt-2 bg-gray-800 rounded-lg max-h-60 w-full overflow-y-auto border border-gray-700 shadow-lg z-10">
               {users
                 .filter((user) =>
                   user.name.toLowerCase().includes(filter.toLowerCase())
@@ -226,7 +291,7 @@ const ManageTeams = () => {
                 .map((user) => (
                   <li
                     key={user.id}
-                    className={`flex justify-between items-center p-3 cursor-pointer hover:bg-gray-700 ${
+                    className={`flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-gray-700 ${
                       selectedUsers.includes(user.id) ? "bg-gray-600" : ""
                     } transition duration-200`}
                     onClick={() => handleUserSelection(user.id)}
@@ -238,7 +303,7 @@ const ManageTeams = () => {
               {users.filter((user) =>
                 user.name.toLowerCase().includes(filter.toLowerCase())
               ).length === 0 && (
-                <li className="p-2 text-gray-400 text-center">
+                <li className="px-4 py-2 text-gray-400 text-center">
                   No users found
                 </li>
               )}
@@ -286,6 +351,10 @@ const ManageTeams = () => {
           Create Team
         </button>
       </div>
+
+      {showLogoutModal && (
+        <LogoutModal onConfirm={confirmLogout} onCancel={cancelLogout} />
+      )}
     </div>
   );
 };

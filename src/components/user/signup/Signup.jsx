@@ -130,7 +130,7 @@ const ShopCreate = () => {
                   required
                   className="cursor-pointer appearance-none block w-full px-3 py-3 border border-gray-700 rounded-md bg-gray-900 text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 >
-                  <option value="" disabled selected>
+                  <option className="" value="" disabled selected>
                     Select Role
                   </option>
                   <option value="user">User</option>

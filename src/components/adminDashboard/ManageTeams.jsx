@@ -315,7 +315,7 @@ const ManageTeams = () => {
           <label
             className={`${
               darkMode ? "text-gray-300" : "text-gray-800"
-            } block mb-2 text-sm font-medium`}
+            } block mb-2`}
           >
             Add Members
           </label>
@@ -328,8 +328,8 @@ const ManageTeams = () => {
               className={`w-full p-4 pr-10 ${
                 darkMode
                   ? "bg-gray-700 text-white placeholder-gray-400"
-                  : "bg-gray-100 text-gray-800 placeholder-gray-500"
-              } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  : "bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-400 hover:border-gray-700 focus:border-blue-500"
+              } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 `}
             />
           </div>
           {filter && (
@@ -390,10 +390,10 @@ const ManageTeams = () => {
                   handleQuestionChange(question.id, e.target.value)
                 }
                 placeholder="Enter your question"
-                className={`flex-1 p-4 border ${
+                className={`flex-1 p-4 ${
                   darkMode
                     ? "bg-gray-700 text-white placeholder-gray-400"
-                    : "bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-400"
+                    : "bg-gray-100 text-gray-800 placeholder-gray-500 "
                 } rounded mr-2 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 `}
               />
               <button

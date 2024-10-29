@@ -16,6 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import LogoutModal from "../Modals/LogoutModal";
 import { logout } from "../../redux/features/authSlice";
+import { toggleDarkMode } from "../../redux/features/themeSlice";
 
 const ManageUsers = () => {
   const navigate = useNavigate();
@@ -26,7 +27,9 @@ const ManageUsers = () => {
   const [open, setOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
-  const [darkMode, setDarkMode] = useState(true);
+  const darkMode = useSelector((state) => state.theme.darkMode);
+  console.log("Dark Mode", darkMode);
+
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Fetch user name by userId
@@ -129,10 +132,9 @@ const ManageUsers = () => {
     navigate(-1);
   };
 
-  const toggleTheme = () => {
-    setDarkMode((prev) => !prev);
+  const handleToggleTheme = () => {
+    dispatch(toggleDarkMode());
   };
-
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
@@ -147,10 +149,18 @@ const ManageUsers = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-900 text-white p-5">
+    <div
+      className={`min-h-screen flex flex-col items-center ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      } p-5`}
+    >
       <div className="flex items-center justify-between w-full">
         <button
-          className="hidden lg:flex items-center text-blue-400 hover:text-blue-600 transition duration-200"
+          className={`hidden lg:flex items-center ${
+            darkMode
+              ? "text-blue-400 hover:text-blue-600"
+              : "text-blue-600 hover:text-blue-800"
+          } transition duration-200`}
           onClick={handleBackClick}
         >
           <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
@@ -158,12 +168,16 @@ const ManageUsers = () => {
         </button>
 
         <div className="flex lg:justify-end justify-between items-center w-full float-end">
-          <div className="cursor-pointer" onClick={toggleTheme}>
+          <div className="cursor-pointer" onClick={handleToggleTheme}>
             {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
           </div>
 
           <button
-            className="ml-4 px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded"
+            className={`ml-4 px-3 py-2 font-semibold rounded text-white ${
+              darkMode
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-red-600 hover:bg-red-700"
+            }`}
             onClick={handleLogout}
           >
             Logout
@@ -177,10 +191,14 @@ const ManageUsers = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
         {loading ? (
-          // Skeleton loader for loading state
           <>
             {[...Array(3)].map((_, index) => (
-              <div key={index} className="bg-gray-800 rounded-lg p-6 shadow-lg">
+              <div
+                key={index}
+                className={`${
+                  darkMode ? "bg-gray-800" : "bg-gray-200"
+                } rounded-lg p-6 shadow-lg`}
+              >
                 <Skeleton variant="text" width="80%" height={40} />
                 <Skeleton
                   variant="text"
@@ -193,13 +211,28 @@ const ManageUsers = () => {
             ))}
           </>
         ) : teams.length === 0 ? (
-          // Fallback UI for no teams
-          <div className="h-[50vh]  flex items-center justify-center bg-gray-900">
-            <div className="bg-gray-800 rounded-lg p-6 shadow-lg w-full max-w-md flex flex-col items-center mx-auto">
-              <h2 className="text-2xl font-bold text-gray-400 text-center">
+          <div
+            className={`h-[50vh] flex items-center justify-center ${
+              darkMode ? "bg-gray-900" : "bg-gray-100"
+            }`}
+          >
+            <div
+              className={`${
+                darkMode ? "bg-gray-800" : "bg-gray-200"
+              } rounded-lg p-6 shadow-lg w-full max-w-md flex flex-col items-center mx-auto`}
+            >
+              <h2
+                className={`text-2xl font-bold text-center ${
+                  darkMode ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
                 No Teams Available
               </h2>
-              <p className="text-gray-500 mt-2 text-center">
+              <p
+                className={`mt-2 text-center ${
+                  darkMode ? "text-gray-500" : "text-gray-700"
+                }`}
+              >
                 Please create a new team to get started.
               </p>
             </div>
@@ -212,13 +245,33 @@ const ManageUsers = () => {
             return (
               <div
                 key={team.id}
-                className="bg-gray-800 rounded-lg p-6 shadow-lg hover:bg-gray-700 transition cursor-pointer"
+                className={`rounded-lg p-6 shadow-lg transition cursor-pointer ${
+                  darkMode
+                    ? "bg-gray-800 hover:bg-gray-700"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
                 onClick={() => handleOpen(team)}
               >
-                <h2 className="text-2xl font-bold">{team.name}</h2>
-                <p className="text-gray-400 mt-2">Members: {memberCount}</p>
+                <h2
+                  className={`text-2xl font-bold ${
+                    darkMode ? "text-white" : "text-black"
+                  }`}
+                >
+                  {team.name}
+                </h2>
+                <p
+                  className={`mt-2 ${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Members: {memberCount}
+                </p>
                 <button
-                  className="mt-4 bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors w-full"
+                  className={`mt-4 p-2 rounded-lg transition-colors w-full ${
+                    darkMode
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-red-400 hover:bg-red-500 text-black"
+                  }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteTeam(team.id);
@@ -233,19 +286,43 @@ const ManageUsers = () => {
       </div>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-gray-700 rounded-lg p-6 w-1/3">
-            <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
-            <p>Are you sure you want to delete?</p>
+        <div
+          className={`fixed inset-0 flex items-center justify-center ${
+            darkMode ? "bg-black bg-opacity-50" : "bg-gray-500 bg-opacity-30"
+          } z-50`}
+        >
+          <div
+            className={`${
+              darkMode ? "bg-gray-700" : "bg-gray-200"
+            } rounded-lg p-6 w-1/3`}
+          >
+            <h2
+              className={`text-lg font-semibold mb-4 ${
+                darkMode ? "text-white" : "text-black"
+              }`}
+            >
+              Confirm Deletion
+            </h2>
+            <p className={darkMode ? "text-white" : "text-black"}>
+              Are you sure you want to delete?
+            </p>
             <div className="flex justify-between mt-4">
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className={`px-4 py-2 rounded ${
+                  darkMode
+                    ? "bg-red-500 hover:bg-red-600 text-white"
+                    : "bg-red-400 hover:bg-red-500 text-black"
+                }`}
                 onClick={confirmDelete}
               >
                 Delete
               </button>
               <button
-                className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+                className={`px-4 py-2 rounded ${
+                  darkMode
+                    ? "bg-gray-300 hover:bg-gray-400 text-black"
+                    : "bg-gray-400 hover:bg-gray-500 text-white"
+                }`}
                 onClick={() => setShowDeleteModal(false)}
               >
                 Cancel

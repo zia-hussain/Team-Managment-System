@@ -18,6 +18,8 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true); // State to track loading
   const darkMode = useSelector((state) => state.theme.darkMode);
 
+  console.log(darkMode, "DARK MODE");
+
   const handleToggleTheme = () => {
     dispatch(toggleDarkMode());
   };
@@ -90,7 +92,13 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid md:grid-cols-1 gap-6 mt-20 text-center">
-        <h1 className="text-4xl font-extrabold">Admin Dashboard</h1>
+        <h1
+          className={`text-4xl font-extrabold bg-gradient-to-r ${
+            darkMode ? "from-sky-300 to-blue-500" : "from-blue-500 to-blue-700"
+          } bg-clip-text text-transparent`}
+        >
+          Admin Dashboard
+        </h1>
         <p className="mt-4 text-gray-400">
           Welcome to the admin dashboard. Here you can manage users and view
           important data.

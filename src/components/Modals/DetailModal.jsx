@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux"; // Import useSelector
 import AnswerModal from "./AnswerModal";
 
-const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
+const DetailModal = ({
+  title,
+  selectedTeam,
+  onCancel,
+  onDeleteUser,
+  theme,
+}) => {
   const [selectedMember, setSelectedMember] = useState(null);
 
   // Retrieve questions specific to the selected team
@@ -10,15 +15,21 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
-      <div className="bg-gray-900 rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all duration-300 ease-in-out border border-gray-800">
+      <div
+        className={`rounded-2xl p-8 max-w-md w-full shadow-2xl transform transition-all duration-300 ease-in-out border ${
+          theme === "dark"
+            ? "bg-gray-900 border-gray-800 text-gray-100"
+            : "bg-white border-gray-300 text-gray-800"
+        }`}
+      >
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-100">
-            {title || "Team Members"}
-          </h2>
+          <h2 className="text-2xl font-bold">{title || "Team Members"}</h2>
           <button
             onClick={onCancel}
-            className="text-gray-400 hover:text-gray-300 transition-colors duration-200"
+            className={`hover:text-red-500 transition-colors duration-200 ${
+              theme === "dark" ? "text-gray-400" : "text-gray-500"
+            }`}
           >
             <svg
               className="w-6 h-6"
@@ -43,20 +54,30 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
             Object.entries(selectedTeam.members).map(([id, memberData]) => (
               <div
                 key={id}
-                className="flex justify-between items-center p-4 bg-gray-800 rounded-lg shadow transition-transform transform"
+                className={`flex justify-between items-center p-4 rounded shadow transition-transform transform ${
+                  theme === "dark"
+                    ? "bg-gray-800 text-gray-300"
+                    : "bg-gray-100 text-gray-800"
+                }`}
               >
-                <span className="text-lg font-semibold text-gray-300">
-                  {memberData.name}
-                </span>
+                <span className="text-lg font-semibold">{memberData.name}</span>
                 <div className="space-x-2">
                   <button
-                    className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-500 transition-colors duration-200"
+                    className={`p-2 rounded transition-colors duration-200 ${
+                      theme === "dark"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-blue-700 hover:bg-blue-600 text-white"
+                    }`}
                     onClick={() => setSelectedMember({ id, ...memberData })}
                   >
                     View Answers
                   </button>
                   <button
-                    className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-500 transition-colors duration-200"
+                    className={`p-2 rounded transition-colors duration-200 ${
+                      theme === "dark"
+                        ? "bg-red-600 hover:bg-red-500 text-white"
+                        : "bg-red-600 hover:bg-red-500 text-white"
+                    }`}
                     onClick={() => {
                       if (selectedTeam && id) {
                         onDeleteUser(selectedTeam.id, id);
@@ -74,14 +95,20 @@ const DetailModal = ({ title, selectedTeam, onCancel, onDeleteUser }) => {
               </div>
             ))
           ) : (
-            <p className="text-gray-400">No members found.</p>
+            <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
+              No members found.
+            </p>
           )}
         </div>
 
         {/* Close Button */}
         <button
           onClick={onCancel}
-          className="mt-8 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 transform"
+          className={`mt-8 w-full font-bold py-3 px-4 rounded-md transition-colors duration-200 transform ${
+            theme === "dark"
+              ? "bg-blue-600 hover:bg-blue-500 text-white"
+              : "bg-blue-700 hover:bg-blue-600 text-white"
+          }`}
         >
           Close
         </button>

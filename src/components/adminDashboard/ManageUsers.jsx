@@ -265,11 +265,8 @@ const ManageUsers = () => {
                   Members: {memberCount}
                 </p>
                 <button
-                  className={`mt-4 p-2 rounded-lg transition-colors w-full ${
-                    darkMode
-                      ? "bg-red-500 hover:bg-red-600 text-white"
-                      : "bg-red-400 hover:bg-red-500 text-black"
-                  }`}
+                  className={`mt-4 p-2 rounded-lg transition-colors w-full text-white bg-red-500 hover:bg-red-600
+                    `}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteTeam(team.id);
@@ -295,7 +292,7 @@ const ManageUsers = () => {
             } rounded-lg p-6 w-1/3`}
           >
             <h2
-              className={`text-lg font-semibold mb-4 ${
+              className={`text-xl font-semibold mb-4 ${
                 darkMode ? "text-white" : "text-black"
               }`}
             >
@@ -304,17 +301,7 @@ const ManageUsers = () => {
             <p className={darkMode ? "text-white" : "text-black"}>
               Are you sure you want to delete?
             </p>
-            <div className="flex justify-between mt-4">
-              <button
-                className={`px-4 py-2 rounded ${
-                  darkMode
-                    ? "bg-red-500 hover:bg-red-600 text-white"
-                    : "bg-red-400 hover:bg-red-500 text-black"
-                }`}
-                onClick={confirmDelete}
-              >
-                Delete
-              </button>
+            <div className="flex justify-between mt-6">
               <button
                 className={`px-4 py-2 rounded ${
                   darkMode
@@ -324,6 +311,16 @@ const ManageUsers = () => {
                 onClick={() => setShowDeleteModal(false)}
               >
                 Cancel
+              </button>
+              <button
+                className={`px-4 py-2 rounded text-white ${
+                  darkMode
+                    ? "bg-red-500 hover:bg-red-600 text-white"
+                    : "bg-red-400 hover:bg-red-500"
+                }`}
+                onClick={confirmDelete}
+              >
+                Yes, Delete
               </button>
             </div>
           </div>
@@ -335,6 +332,7 @@ const ManageUsers = () => {
           selectedTeam={selectedTeam}
           onCancel={handleClose}
           onDeleteUser={handleDeleteUser}
+          theme={darkMode}
         />
       )}
 

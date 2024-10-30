@@ -232,7 +232,7 @@ const ManageTeams = () => {
       <div
         className={`${
           darkMode ? "bg-gray-800" : "bg-white"
-        } rounded p-8 w-[95vw] md:max-w-lg shadow-lg`}
+        } rounded-2xl p-8 w-[95vw] md:max-w-lg shadow-lg`}
       >
         <h2 className="text-4xl font-bold mb-6">Create a New Team</h2>
 
@@ -266,9 +266,15 @@ const ManageTeams = () => {
               "& .MuiSelect-icon": {
                 color: darkMode ? "#9CA3AF" : "#6B7280",
               },
+              "& .Mui-selected": {
+                color: "#FFFFFF",
+                backgroundColor: darkMode ? "#4b5563" : "#E5E7EB",
+              },
+              color: darkMode ? "#fff" : "#1f2937",
+              backgroundColor: darkMode ? "#374151" : "#F3F4F6",
             }}
           >
-            <MenuItem value="" disabled selected>
+            <MenuItem value="" disabled>
               <p className={`${darkMode ? "text-white" : ""}`}>
                 Choose a category...
               </p>
@@ -280,6 +286,9 @@ const ManageTeams = () => {
                 sx={{
                   "&:hover": {
                     backgroundColor: darkMode ? "#4b5563" : "#E5E7EB",
+                  },
+                  "&& .Mui-selected": {
+                    color: "pink",
                   },
                   color: darkMode ? "#FFFFFF" : "#000000",
                 }}
@@ -393,13 +402,13 @@ const ManageTeams = () => {
                 className={`flex-1 p-4 ${
                   darkMode
                     ? "bg-gray-700 text-white placeholder-gray-400"
-                    : "bg-gray-100 text-gray-800 placeholder-gray-500 "
+                    : "bg-gray-100 text-gray-800 placeholder-gray-500 border border-gray-400"
                 } rounded mr-2 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 `}
               />
               <button
                 type="button"
                 onClick={() => handleRemoveQuestion(question.id)}
-                className={`p-3 rounded ${
+                className={`p-4 rounded ${
                   darkMode
                     ? "bg-red-500 hover:bg-red-600"
                     : "bg-red-600 hover:bg-red-700"
@@ -422,14 +431,13 @@ const ManageTeams = () => {
             <span className="ml-2">Add Question</span>
           </button>
         </div>
-
         <button
           onClick={handleCreateTeam}
-          className={`w-full p-4 rounded text-white font-bold text-xl ${
+          className={`w-full py-3 px-6 rounded text-white font-medium text-lg tracking-wider shadow-md transition duration-200 ease-out transform active:scale-95 ${
             darkMode
-              ? "bg-blue-600 hover:bg-blue-500"
-              : "bg-blue-700 hover:bg-blue-600"
-          } transition-colors duration-300`}
+              ? "bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:ring-blue-500/50"
+              : "bg-blue-700 hover:bg-blue-600 focus:ring-4 focus:ring-blue-700/50"
+          }`}
         >
           Create Team
         </button>

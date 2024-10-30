@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/features/authSlice";
 import { ref, getDatabase, onValue } from "firebase/database";
 import { auth } from "../../firebase/firebaseConfig";
@@ -11,6 +11,7 @@ import LightModeToggle from "@mui/icons-material/Brightness7";
 import { Link, useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import { Tooltip } from "@mui/material";
+import { toggleDarkMode } from "../../redux/features/themeSlice";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Dashboard = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+  const darkMode = useSelector((state) => state.theme.darkMode);
   const [teams, setTeams] = useState([]);
 
   const handleLogout = () => {
@@ -33,9 +34,8 @@ const Dashboard = () => {
   const cancelLogout = () => {
     setShowLogoutModal(false);
   };
-
-  const toggleTheme = () => {
-    setDarkMode((prev) => !prev);
+  const handleToggleTheme = () => {
+    dispatch(toggleDarkMode());
   };
 
   const fetchUsername = async (userId) => {
@@ -118,7 +118,7 @@ const Dashboard = () => {
         </h1>
 
         <div className="flex items-center">
-          <div className="cursor-pointer" onClick={toggleTheme}>
+          <div className="cursor-pointer" onClick={handleToggleTheme}>
             {darkMode ? <LightModeToggle /> : <DarkModeToggle />}
           </div>
 

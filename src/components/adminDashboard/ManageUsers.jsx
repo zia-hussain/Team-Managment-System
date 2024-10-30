@@ -28,8 +28,6 @@ const ManageUsers = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
   const darkMode = useSelector((state) => state.theme.darkMode);
-  console.log("Dark Mode", darkMode);
-
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Fetch user name by userId

@@ -183,7 +183,7 @@ const ManageUsers = () => {
         </div>
       </div>
 
-      <h1 className="mt-4 lg:mt-0 text-5xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
+      <h1 className="mt-4 h-14 lg:mt-0 text-5xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent">
         Manage Teams & Users
       </h1>
 
@@ -193,7 +193,7 @@ const ManageUsers = () => {
             {[...Array(3)].map((_, index) => (
               <div
                 key={index}
-                className={`${
+                className={`md:min-h-72 ${
                   darkMode ? "bg-gray-800" : "bg-gray-200"
                 } rounded-lg p-6 shadow-lg`}
               >
@@ -243,27 +243,29 @@ const ManageUsers = () => {
             return (
               <div
                 key={team.id}
-                className={`rounded-lg p-6 shadow-lg transition cursor-pointer ${
+                className={`rounded-lg p-6 shadow-lg transition cursor-pointer md:min-h-52 flex flex-col items-start justify-between mt-14 ${
                   darkMode
                     ? "bg-gray-800 hover:bg-gray-700"
                     : "bg-gray-200 hover:bg-gray-300"
                 }`}
                 onClick={() => handleOpen(team)}
               >
-                <h2
-                  className={`text-2xl font-bold ${
-                    darkMode ? "text-white" : "text-black"
-                  }`}
-                >
-                  {team.name}
-                </h2>
-                <p
-                  className={`mt-2 ${
-                    darkMode ? "text-gray-400" : "text-gray-600"
-                  }`}
-                >
-                  Members: {memberCount}
-                </p>
+                <div>
+                  <h2
+                    className={`text-2xl font-bold ${
+                      darkMode ? "text-white" : "text-black"
+                    }`}
+                  >
+                    {team.name}
+                  </h2>
+                  <p
+                    className={`mt-2 ${
+                      darkMode ? "text-gray-400" : "text-gray-600"
+                    }`}
+                  >
+                    Members: {memberCount}
+                  </p>
+                </div>
                 <button
                   className={`mt-4 p-2 rounded-lg transition-colors w-full text-white bg-red-500 hover:bg-red-600
                     `}

@@ -77,7 +77,7 @@ const Login = () => {
       <div className="w-full h-screen grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
         {/* Left side - Form */}
         <div className="bg-gray-800 p-8 sm:p-12 flex items-center justify-center h-full relative">
-          <div className="w-full max-w-lg relative z-30">
+          <div className="w-full max-w-xl relative z-30">
             <h2 className="text-3xl font-extrabold text-white">
               Login to your Account
               <span className="text-blue-500 pl-1">.</span>

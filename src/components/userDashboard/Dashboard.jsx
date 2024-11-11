@@ -134,7 +134,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         {/* Create Team Card */}
         <div
-          className={`rounded-lg shadow-lg p-5 flex flex-col items-center justify-center transition-transform transform ${
+          className={`rounded-lg shadow-lg p-5 flex flex-col items-center justify-center transition-transform transform min-h-72 ${
             darkMode
               ? "bg-gray-800 border-gray-700 text-gray-400"
               : "bg-white border-gray-300 text-gray-600"
@@ -169,7 +169,7 @@ const Dashboard = () => {
           ? [1, 2, 3, 4].map((index) => (
               <div
                 key={index}
-                className="md:h-52 bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-lg p-5 flex flex-col transition-transform transform"
+                className="md:min-h-72 bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-lg p-5 flex flex-col transition-transform transform"
               >
                 <Skeleton
                   variant="text"
@@ -202,7 +202,7 @@ const Dashboard = () => {
               <Tooltip key={team.id} title={team.name} arrow>
                 <div
                   title={team.name}
-                  className={`md:h-52 rounded-lg shadow-lg p-5 flex flex-col transition-transform transform cursor-pointer border-l-4 backdrop-blur-lg ${
+                  className={`md:min-h-72 rounded-lg shadow-lg p-5 flex flex-col transition-transform transform cursor-pointer border-l-4 backdrop-blur-lg ${
                     darkMode
                       ? "bg-gradient-to-r from-gray-800 to-gray-900 border-gray-600 border-l-blue-600"
                       : "bg-gradient-to-r from-gray-100 to-gray-200 border-gray-300 border-l-blue-500"

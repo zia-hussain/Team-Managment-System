@@ -93,9 +93,7 @@ const AdminDashboard = () => {
 
       <div className="grid md:grid-cols-1 gap-6 mt-20 text-center">
         <h1
-          className={`text-4xl font-extrabold bg-gradient-to-r ${
-            darkMode ? "from-sky-300 to-blue-500" : "from-blue-500 to-blue-700"
-          } bg-clip-text text-transparent`}
+          className={`mt-4 h-14 lg:mt-0 text-5xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent`}
         >
           Admin Dashboard
         </h1>
@@ -108,7 +106,7 @@ const AdminDashboard = () => {
         <div className={`grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8`}>
           <Link
             to="/manage-users"
-            className={`p-14 rounded-lg shadow-lg transition-colors duration-300 flex flex-col items-center justify-center ${
+            className={`p-14 rounded-lg shadow-lg transition-colors duration-300 flex flex-col items-center justify-center min-h-72 ${
               darkMode
                 ? "bg-gray-800 text-white hover:bg-gray-700"
                 : "bg-gray-200 text-gray-800 hover:bg-gray-300"
@@ -126,7 +124,7 @@ const AdminDashboard = () => {
 
           <Link
             to="/create-teams"
-            className={`p-14 rounded-lg shadow-lg transition-colors duration-300 flex flex-col items-center justify-center ${
+            className={`p-14 rounded-lg shadow-lg transition-colors duration-300 flex flex-col items-center justify-center min-h-72 ${
               darkMode
                 ? "bg-gray-800 text-white hover:bg-gray-700"
                 : "bg-gray-200 text-gray-800 hover:bg-gray-300"

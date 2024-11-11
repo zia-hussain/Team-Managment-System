@@ -176,9 +176,9 @@ const ManageTeams = () => {
 
   return (
     <div
-      className={`min-h-screen w-full flex flex-col items-center justify-center ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"
-      } p-5 hide-scrollbar overflow-hidden`}
+      className={`min-h-screen flex flex-col items-center ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      } p-5`}
     >
       <div className="flex items-center justify-between w-full">
         <button
@@ -211,11 +211,9 @@ const ManageTeams = () => {
         </div>
       </div>
 
-      <div className="mt-4 mb-2 lg:mt-0">
+      <div className="mt-4 mb-2 lg:mt-10">
         <h1
-          className={`text-5xl font-extrabold mb-4 bg-gradient-to-r ${
-            darkMode ? "from-sky-300 to-blue-500" : "from-blue-500 to-blue-700"
-          } bg-clip-text text-transparent`}
+          className={`mt-4 h-14 lg:mt-0 text-5xl font-extrabold mb-2 bg-gradient-to-r from-sky-300 to-blue-400 bg-clip-text text-transparent`}
         >
           Create Teams
         </h1>
